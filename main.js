@@ -1,6 +1,8 @@
 /*jshint esversion: 6 */
 
-seeds = [];
+var seeds = [];
+
+var wind;
 
 function setup() {
   createCanvas(700, 600);
@@ -14,6 +16,8 @@ function setup() {
     seeds[p].velocity.x = random(-10, 10);
     seeds[p].velocity.y = random(-10, 10);
   }
+
+  wind = new Wind(20);
 }
 
 function draw() {
