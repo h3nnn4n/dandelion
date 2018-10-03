@@ -12,9 +12,7 @@ function setup() {
   }
 
   for (var p in seeds) {
-    seeds[p].set_target(random(width), random(height));
-    seeds[p].velocity.x = random(-10, 10);
-    seeds[p].velocity.y = random(-10, 10);
+    seeds[p].random_target();
   }
 
   wind = new Wind(20);

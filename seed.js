@@ -7,13 +7,15 @@ class Seed {
     this.acceleration = createVector(0, 0);
 
     this.max_velocity = 4;
-    this.max_force = 0.25;
+    this.max_force = 0.125;
 
     this.target = createVector(0, 0);
-
+    this.steering_force = createVector(0, 0);
     this.desired_velocity = createVector(0, 0);
 
     this.seek = false;
+
+    this.debug = false;
   }
 
   set_target(x, y) {
@@ -31,13 +33,18 @@ class Seed {
 
   update_desired_velocity() {
     p5.Vector.sub(this.target, this.position, this.desired_velocity);
+
+    if (this.desired_velocity.mag() < 2.0) {
+      this.random_target();
+    }
+
     this.desired_velocity.setMag(this.max_velocity);
   }
 
   steer() {
-    var steer = p5.Vector.sub(this.desired_velocity, this.velocity);
-    steer.setMag(this.max_force);
-    this.acceleration.add(steer);
+    p5.Vector.sub(this.desired_velocity, this.velocity, this.steering_force);
+    this.steering_force.setMag(this.max_force);
+    this.acceleration.add(this.steering_force);
   }
 
   move () {
@@ -47,20 +54,49 @@ class Seed {
     this.acceleration.mult(0);
   }
 
+  random_target() {
+    this.set_target(
+      random(100, width - 100),
+      random(100, height - 100)
+    );
+  }
+
   show() {
     colorMode(HSB);
 
-    if (this.seek) {
+    if (this.seek && this.debug) {
       stroke(color(170, 150, 150));
       line(this.position.x, this.position.y, this.target.x, this.target.y);
 
       stroke(color(200, 150, 150));
-      line(this.position.x, this.position.y, this.position.x + this.desired_velocity.x, this.position.y + this.desired_velocity.y);
+      line(
+        this.position.x,
+        this.position.y,
+        this.position.x + this.desired_velocity.x * 4,
+        this.position.y + this.desired_velocity.y * 4
+      );
+
+      stroke(color(25, 150, 150));
+      line(
+        this.position.x,
+        this.position.y,
+        this.position.x + this.steering_force.x * 100,
+        this.position.y + this.steering_force.y * 100
+      );
     }
 
-    stroke(color(230, 150, 150));
-    line(this.position.x, this.position.y, this.position.x + this.velocity.x, this.position.y + this.velocity.y);
+    if (this.debug) {
+      stroke(color(230, 150, 150));
+      line(
+        this.position.x,
+        this.position.y,
+        this.position.x + this.velocity.x,
+        this.position.y + this.velocity.y
+      );
+    }
 
+    stroke(color(0, 0, 0));
+    fill(color(0));
     ellipse(this.position.x, this.position.y, 5);
   }
 }
