@@ -6,14 +6,15 @@ class Seed {
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
 
-    this.max_velocity = 4;
-    this.max_force = 0.125;
+    this.max_velocity = 7.5;
+    this.max_force = 0.01;
 
     this.target = createVector(0, 0);
     this.steering_force = createVector(0, 0);
     this.desired_velocity = createVector(0, 0);
 
     this.seek = false;
+    this.to_the_wind = false;
 
     this.debug = false;
   }
@@ -26,9 +27,50 @@ class Seed {
   }
 
   update() {
+    this.update_bounds();
+    this.wind_move();
+    this.target_move();
+    this.move();
+  }
+
+  update_bounds() {
+    if (this.position.x > width)
+      this.position.x = 0;
+
+    if (this.position.y > height || this.position.y < 0)
+      this.position.y = random(100, height - 10);
+
+    //if (this.position.x < 0 || this.position.x > width) {
+      //this.seek = false;
+      //this.to_the_wind = false;
+    //}
+
+    //if (this.position.y < 0 || this.position.y > height) {
+      //this.seek = false;
+      //this.to_the_wind = false;
+    //}
+  }
+
+  wind_move() {
+    if (!this.to_the_wind)
+      return;
+
+    var wind_force = wind.get_force(
+      this.position.x,
+      this.position.y
+    )
+
+    wind_force.setMag(this.max_force);
+
+    this.acceleration.add(wind_force);
+  }
+
+  target_move() {
+    if (!this.seek)
+      return;
+
     this.update_desired_velocity();
     this.steer();
-    this.move();
   }
 
   update_desired_velocity() {

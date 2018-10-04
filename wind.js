@@ -4,7 +4,7 @@ class Wind {
   constructor(block_width) {
     this.block_width = block_width;
     this.time = 0;
-    this.divisor = width / 50;
+    this.divisor = 1;
 
     this.flow_field = [];
 
@@ -20,21 +20,49 @@ class Wind {
   }
 
   set_field() {
+    noiseDetail(8, 0.5);
+
     for (var x = 0; x < width / this.block_width; x++) {
       for (var y = 0; y < height / this.block_width; y++) {
         this.flow_field[x][y] = noise(
           x / this.divisor,
           y / this.divisor,
           this.time
-        ) * TWO_PI;
+        ) * PI * 0.9 + PI * 1.05;
       }
     }
   }
 
   get_force(x, y) {
+    var bounds = this.validate_bounds(x, y);
+
+    x = bounds[0];
+    y = bounds[1];
+
     var force = createVector(0, this.block_width);
-    force.rotate(this.flow_field[x][y]);
+    force.rotate(
+      this.flow_field[
+        Math.floor(x / this.block_width)
+      ][
+        Math.floor(y / this.block_width)
+      ]);
     return force;
+  }
+
+  validate_bounds(x, y) {
+    if (x < 0)
+      x = 0;
+
+    if (x > width)
+      x = width - 1;
+
+    if (y < 0)
+      y = 0;
+
+    if (y > height)
+      y = height - 1;
+
+    return [x, y];
   }
 
   show() {
