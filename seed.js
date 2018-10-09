@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 class Seed {
-  constructor(x, y) {
+  constructor(x, y, angle) {
     this.position = createVector(x, y);
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
@@ -12,6 +12,9 @@ class Seed {
     this.target = createVector(0, 0);
     this.steering_force = createVector(0, 0);
     this.desired_velocity = createVector(0, 0);
+
+    this.body_size = 5;
+    this.angle = angle || 0;
 
     this.seek = false;
     this.to_the_wind = false;
@@ -137,8 +140,28 @@ class Seed {
       );
     }
 
-    stroke(color(0, 0, 0));
-    fill(color(0));
-    ellipse(this.position.x, this.position.y, 5);
+    var a = 5.0;
+    var b = 2.0;
+
+    fill(240, 60, 60, 0.7);
+    noStroke();
+    push();
+    translate(this.position.x, this.position.y);
+    rotate(this.angle);
+    quad(
+      -this.body_size * a,
+      -this.body_size * a,
+      -this.body_size * b,
+      this.body_size * b,
+      this.body_size * a,
+      this.body_size * a,
+      this.body_size * b,
+      -this.body_size * b
+    );
+    pop();
+
+    //stroke(color(120, 120, 120));
+    //fill(color(120, 120, 120));
+    //ellipse(this.position.x, this.position.y, 5);
   }
 }
